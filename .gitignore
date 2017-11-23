@@ -1,0 +1,11 @@
+/build
+/ext
+/extjs
+/docs
+bootstrap.*
+classic.json*
+modern.json*
+.sencha
+.~*
+
+formation_extjs.odt

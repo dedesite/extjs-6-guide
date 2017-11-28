@@ -3,11 +3,7 @@
  * This call registers your application to be launched when the browser is ready.
  */
 Ext.application({
-  name: "AutonomousHouse",
+  name: "App",
 
-  requires: ["Ext.MessageBox"],
-
-  launch() {
-    Ext.Msg.alert("Hello Ext JS", "Hello! Welcome to Ext JS.");
-  }
+  extend: "App.Application"
 });

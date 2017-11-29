@@ -16,6 +16,35 @@ Ext.define("App.Application", {
         type: "vbox"
       },
       padding: 20,
+      viewModel: {
+        formulas: {
+          updateBatteryNumbers: {
+            bind: {
+              nbWattsHourConsumption: "{nbWattsHourConsumption.value}",
+              nbAutonomyDays: "{nbAutonomyDays.value}",
+              hasInverter: "{hasInverter.checked}",
+              maxBatteryUnloadDepth: "{maxBatteryUnloadDepth.value}",
+              batteryVoltage: "{batteryVoltage.value}",
+              batteryCapacity: "{batteryCapacity.value}"
+            },
+            get(params) {
+              const lineLoss = 0.97; // Appromimation
+              const totalLoss = params.hasInverter ? 0.9 * lineLoss : lineLoss;
+              const consumptionPerDay =
+                params.nbWattsHourConsumption * totalLoss;
+              const consumptionToCovert =
+                consumptionPerDay * params.nbAutonomyDays;
+              const capacityNeeded =
+                consumptionToCovert / (params.maxBatteryUnloadDepth / 100);
+              const ampHourNeeded = capacityNeeded / params.batteryVoltage;
+              const numBatteryNeeded = Math.ceil(
+                ampHourNeeded / params.batteryCapacity
+              );
+              return numBatteryNeeded;
+            }
+          }
+        }
+      },
       items: [
         {
           xtype: "toolbar",
@@ -83,7 +112,10 @@ Ext.define("App.Application", {
         },
         {
           xtype: "label",
-          html: "<strong>Nombre de batteries nécessaires : 4</strong>"
+          bind: {
+            html:
+              "<strong>Nombre de batteries nécessaires : {updateBatteryNumbers}</strong>"
+          }
         }
       ]
     });

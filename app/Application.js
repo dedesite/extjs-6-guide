@@ -2,10 +2,11 @@
 
 Ext.define("App.Application", {
   extend: "Ext.app.Application",
-
   name: "App",
-
   requires: ["App.*"],
+  viewport: {
+    controller: "viewport"
+  },
   launch() {
     Ext.Viewport.add({
       xtype: "panel",
@@ -23,12 +24,31 @@ Ext.define("App.Application", {
           items: [
             {
               xtype: "button",
-              text: "Solaire"
+              text: "Solaire",
+              reference: "solaire",
+              handler: "onMenuClicked"
+            },
+            {
+              xtype: "button",
+              text: "Admin",
+              reference: "admin",
+              handler: "onMenuClicked"
             }
           ]
         },
         {
-          xtype: "batterycalculator"
+          xtype: "panel",
+          layout: "card",
+          reference: "mainpanel",
+          flex: 1,
+          items: [
+            {
+              xtype: "batterycalculator"
+            },
+            {
+              xtype: "admin"
+            }
+          ]
         }
       ]
     });

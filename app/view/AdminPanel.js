@@ -1,32 +1,49 @@
+"use strict";
+
+const devicesStore = Ext.create("App.store.Devices");
+
 Ext.define("App.view.AdminPanel", {
   extend: "Ext.Panel",
   xtype: "admin",
+  controller: "admin",
   layout: "vbox",
+  viewModel: {
+    data: {
+      device: "",
+      averageConsumption: ""
+    }
+  },
   items: [
     {
-      xtype: "grid",
-      store: [
+      xtype: "container",
+      layout: "hbox",
+      padding: 10,
+      items: [
         {
-          device: "Frigo",
-          averageConsumption: 300
+          xtype: "textfield",
+          label: "Appareil",
+          bind: "{device}"
         },
         {
-          device: "Ordinateur",
-          averageConsumption: 100
+          xtype: "numberfield",
+          label: "Consommation moyenne",
+          bind: "{averageConsumption}",
+          minValue: 1,
+          maxValue: 5000
         },
         {
-          device: "Machine à laver",
-          averageConsumption: 3000
-        },
-        {
-          device: "Sèche linge",
-          averageConsumption: 3000
-        },
-        {
-          device: "TV LCD",
-          averageConsumption: 200
+          xtype: "button",
+          iconCls: "x-fa fa-plus",
+          text: "Ajouter",
+          handler: "onAdd"
         }
-      ],
+      ]
+    },
+    {
+      xtype: "grid",
+      title: "Consommation moyenne des appareils",
+      reference: "devicesGrid",
+      store: devicesStore,
       flex: 1,
       columns: [
         { text: "Appareil", dataIndex: "device", width: 200 },
@@ -38,4 +55,19 @@ Ext.define("App.view.AdminPanel", {
       ]
     }
   ]
+});
+
+Ext.define("App.view.AdminPanelController", {
+  extend: "Ext.app.ViewController",
+  alias: "controller.admin",
+  onAdd() {
+    const vm = this.getViewModel();
+    const store = this.lookupReference("devicesGrid").getStore();
+    store.add({
+      device: vm.get("device"),
+      averageConsumption: vm.get("averageConsumption")
+    });
+    vm.set("device", "");
+    vm.set("averageConsumption", "");
+  }
 });

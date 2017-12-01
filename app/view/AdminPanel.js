@@ -51,6 +51,18 @@ Ext.define("App.view.AdminPanel", {
           text: "Consommation moyenne",
           dataIndex: "averageConsumption",
           width: 250
+        },
+        {
+          width: 70,
+          cell: {
+            tools: {
+              remove: {
+                iconCls: "x-fa fa-remove red",
+                handler: "onRemove",
+                weight: 1
+              }
+            }
+          }
         }
       ]
     }
@@ -69,5 +81,9 @@ Ext.define("App.view.AdminPanelController", {
     });
     vm.set("device", "");
     vm.set("averageConsumption", "");
+  },
+  onRemove(grid, info) {
+    const store = grid.getStore();
+    store.remove(info.record);
   }
 });

@@ -30,6 +30,12 @@ Ext.define("App.Application", {
             },
             {
               xtype: "button",
+              text: "Production panneau",
+              reference: "solartchart",
+              handler: "onMenuClicked"
+            },
+            {
+              xtype: "button",
               text: "Admin",
               reference: "admin",
               handler: "onMenuClicked"
@@ -44,6 +50,9 @@ Ext.define("App.Application", {
           items: [
             {
               xtype: "batterycalculator"
+            },
+            {
+              xtype: "solarchart"
             },
             {
               xtype: "admin"

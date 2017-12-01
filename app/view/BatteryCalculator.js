@@ -2,6 +2,7 @@
 
 Ext.define("App.view.BatteryCalculator", {
   extend: "Ext.Panel",
+  layout: "vbox",
   xtype: "batterycalculator",
   viewModel: {
     formulas: {

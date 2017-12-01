@@ -2,7 +2,11 @@ Ext.define("App.view.ViewportController", {
   extend: "Ext.app.ViewController",
   alias: "controller.viewport",
   onMenuClicked(btn) {
-    const itemIndex = btn.reference === "solaire" ? 0 : 1;
-    this.lookup("mainpanel").setActiveItem(itemIndex);
+    const itemIndexes = {
+      solaire: 0,
+      solartchart: 1,
+      admin: 2
+    };
+    this.lookup("mainpanel").setActiveItem(itemIndexes[btn.reference]);
   }
 });

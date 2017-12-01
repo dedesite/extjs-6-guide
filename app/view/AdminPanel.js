@@ -1,7 +1,5 @@
 "use strict";
 
-const devicesStore = Ext.create("App.store.Devices");
-
 Ext.define("App.view.AdminPanel", {
   extend: "Ext.Panel",
   xtype: "admin",
@@ -43,7 +41,9 @@ Ext.define("App.view.AdminPanel", {
       xtype: "grid",
       title: "Consommation moyenne des appareils",
       reference: "devicesGrid",
-      store: devicesStore,
+      store: {
+        type: "devices"
+      },
       flex: 1,
       columns: [
         { text: "Appareil", dataIndex: "device", width: 200 },

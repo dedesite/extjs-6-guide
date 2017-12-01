@@ -3,6 +3,7 @@
 Ext.define("App.view.SolarChart", {
   extend: "Ext.Panel",
   xtype: "solarchart",
+  controller: "solarchart",
   requires: [
     "Ext.chart.CartesianChart",
     "Ext.chart.series.Bar",
@@ -10,6 +11,17 @@ Ext.define("App.view.SolarChart", {
     "Ext.chart.axis.Category"
   ],
   layout: "fit",
+  tbar: [
+    {
+      xtype: "selectfield",
+      reference: "citySelector",
+      label: "Choisissez une ville",
+      options: [{ text: "Lille", value: 0 }, { text: "Marseille", value: 1 }],
+      listeners: {
+        select: "onCityChange"
+      }
+    }
+  ],
   items: [
     {
       xtype: "cartesian",

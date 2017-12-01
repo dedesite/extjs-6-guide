@@ -59,7 +59,7 @@ Ext.define("App.store.Photovoltaic", {
                 return { month: this.mounths[index], production: pow };
             });
             console.log("loadData", data);
-            this.loadData(data);
+            this.setData(data);
         }
     },
     constructor(config) {

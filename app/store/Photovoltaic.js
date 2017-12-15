@@ -1,3 +1,5 @@
+// "use strict";
+
 Ext.define("App.store.Photovoltaic", {
     extend: "Ext.data.Store",
     alias: "store.photovoltaic",
@@ -58,12 +60,11 @@ Ext.define("App.store.Photovoltaic", {
             const data = cityData.yearProduction.map((pow, index) => {
                 return { month: this.mounths[index], production: pow };
             });
-            console.log("loadData", data);
             this.setData(data);
         }
     },
     constructor(config) {
-        this.callParent([config]);
+        this.callParent(arguments);
 
         this.selectCity(0);
     }

@@ -79,11 +79,13 @@ Ext.define("App.view.AdminPanelController", {
       device: vm.get("device"),
       averageConsumption: vm.get("averageConsumption")
     });
+    store.save();
     vm.set("device", "");
     vm.set("averageConsumption", "");
   },
   onRemove(grid, info) {
     const store = grid.getStore();
     store.remove(info.record);
+    store.save();
   }
 });

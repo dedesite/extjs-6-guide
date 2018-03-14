@@ -1,0 +1,346 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Data package | ExtJs 6.5</title>
+
+  <link rel="stylesheet" href="css/reveal.css">
+  <link rel="stylesheet" href="css/theme/beige.css">
+  <!--Personnal modification-->
+  <link rel="stylesheet" href="css/slides.css">
+
+  <!-- Theme used for syntax highlighting of code -->
+  <link rel="stylesheet" href="lib/css/zenburn.css">
+
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+    <section data-markdown>
+      <textarea data-template>
+        ### Vue d'ensemble
+
+        Charge et sauvegarde les données de l'application
+
+        Intégré aux composants
+
+        Sauvegarde locale ou distante
+
+        Similaire à un ORM
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### 3 éléments principaux
+
+        Model
+
+        Store
+
+        Proxy
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Model
+
+        Défini une entité métier
+
+        Contient des champs
+
+        Gestion de la validation
+
+        Des traitements métiers
+
+        Instance sont des `records`
+
+        idProperty
+
+        validators
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ```js
+        Ext.define('MyApp.model.Base', {
+          extend: 'Ext.data.Model',
+          fields: [
+            ...
+          ]
+        }
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Model - fields
+
+        Décrit les champs du model
+
+        Représente des données existantes (ie champs SQL ou autre)
+
+        Ou des données calculées non sauvgardées
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Model - fields
+
+        ```js
+        fields: [
+          'id',
+          {name: 'amount', type: 'int', defaultValue: 0},
+          {
+            name: 'average', type : 'int', calculate: function(data) {
+              return data.amount / data.count;
+            },
+            persist: false
+          },
+          {
+            name: 'month', convert: function (value, record) {
+              return new Date(record.get('year'), value);
+            },
+            depends: ['year'],
+          }
+        ]
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Model - custom fields
+
+        ```js
+        Ext.define('App.field.Time', {
+          extend: 'Ext.data.field.Field',
+          alias: 'data.field.time',
+          timeFormat: 'g:i',
+          convert(value) {
+            const date = Ext.Date.parse(value, this.timeFormat);
+            return (date.getHours() - 1) * 60 + date.getMinutes();
+          }
+        });
+        ```
+
+        ```js
+        Ext.define('App.model.PhoneCall', {
+          fields: [
+            { name: 'startTime', type: 'time' },
+            { name: 'phoneNumber', type: 'phonenumber' }
+          ]
+        });
+        ```
+      </textarea>
+    </section>      
+    <section data-markdown>
+      <textarea data-template>
+        ### Model - Schema
+
+        Fonctionnement commun pour plusieurs Model
+
+        Dans une classe mère
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Model - Schema : définition
+
+        ```js
+        Ext.define('MyApp.model.Base', {
+          extend: 'Ext.data.Model',
+          fields: [{name: 'id', type: 'int'}],
+          schema: {
+            namespace: 'MyApp.model',
+            proxy: {
+              type: 'ajax',
+              url: '{entityName}.json',
+              reader: {
+                type: 'json',
+                rootProperty: '{entityName:lowercase}'
+              }
+            }
+          }
+        });
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Model - Schema : utilisation
+
+        ```js
+        Ext.define('MyApp.model.User', {
+          extend: 'MyApp.model.Base',
+          fields: [{name: 'name', type: 'string'}]
+        });
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Model - Associations
+
+        Lie des `Model` entre eux
+
+        Comme un ORM
+
+        Décrire autres associations
+
+        ```js
+        Ext.define('MyApp.model.Post', {
+          extend: 'MyApp.model.Base',
+          fields: [{
+            name: 'userId',
+            type: 'int',
+            reference: 'User'
+          }]
+        });
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Model - Associations utilisation
+
+        ```js
+        user.posts(function(posts){
+          posts.each(function(post) {
+            console.log('Post: ' + post.get('title'));
+          });
+        });
+
+        user.posts().add({
+          userId: 1,
+          title: 'Post 10'
+        });
+
+        user.posts().sync();
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Store
+
+        Collection de records
+
+        Permet la manipulation des données (opérations CRUD)
+
+        Peut trier, filtrer
+
+        Peut être partagé ou non (attention à cela)
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### ChainedStore
+
+        Vue sur un store
+
+        Permet de faire des filtres sans avoir à faire une copie d'un store
+
+        ```js
+        store: {
+          type: 'chained',
+          source: 'objects',
+          sorters: [
+            'name'
+          ],
+          filters: [{
+            property: 'name',
+            value: 'toto'
+          }]
+        },
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Proxy
+
+        Défini la manière dont les données vont être manipulées
+
+        Peut être locales : en mémoire ou via Local Storage
+
+        Ou distant : Ajax, Jsonp, Rest
+
+        Où le mettre ? Model ou Store
+
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Proxy - définition
+
+        ```js
+        proxy: {
+          type: 'rest',
+          url: 'api/folders',
+          extraParams: {nested: true},
+          reader: {
+            type: 'json',
+            rootProperty(data) {
+              return data.result || data.children;
+            }
+          },
+          writer: {
+            type: 'json',
+            // Envoi tous les champs (pas juste ceux modifiés)
+            writeAllFields: true
+          }
+        }
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ### Utilisation dans une vue
+
+        ```js
+        {
+          xtype: "grid",
+          store: {
+            type: "devices"
+          }
+        }
+        ```
+
+        ```js
+        {
+          xtype: "grid",
+          store: myDevices
+        }
+        ```       
+      </textarea>
+    </section>
+    </div>
+  </div>
+  <script src="lib/js/head.min.js"></script>
+  <script src="js/reveal.js"></script>
+
+  <script>
+    // More info about config & dependencies:
+    // - https://github.com/hakimel/reveal.js#configuration
+    // - https://github.com/hakimel/reveal.js#dependencies
+    Reveal.initialize({
+      history: true,
+      dependencies: [
+        { src: 'plugin/markdown/marked.js' },
+        { src: 'plugin/markdown/markdown.js' },
+        { src: 'plugin/notes/notes.js', async: true },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+      ]
+    });
+  </script>
+</body>
+</html>

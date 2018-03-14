@@ -1,0 +1,12 @@
+p {
+  text-align: left;
+}
+
+.reveal section img {
+  border: none;
+}
+
+img[src*="#center"] {
+  display: block;
+  margin: auto !important;
+}

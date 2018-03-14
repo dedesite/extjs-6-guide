@@ -1,0 +1,288 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Grands principes | ExtJs 6.5</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/beige.css">
+  <!--Personnal modification-->
+  <link rel="stylesheet" href="css/slides.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement( 'link' );
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName( 'head' )[0].appendChild( link );
+	</script>
+</head>
+<body>
+	<div class="reveal">
+		<div class="slides">
+    <section data-markdown>
+      <textarea data-template>
+        ## Formation ExtJs 6.5
+        ### Grands principes
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Api déclarative
+
+```js
+{
+  xtype: "panel",
+  header: {
+    title: "La maison autonome"
+  },
+  html: "Hello World!",
+  padding: 20,
+  items: [
+    {
+      xtype: "button",
+      text: "Soleil"
+    }
+  ]
+}
+```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Api déclarative
+
+        Recommandée
+
+        Moins verbeuse
+
+        Plus "natuelle"
+
+        Difficile à debugger
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Api impérative
+
+```js
+const button = Ext.create('Ext.Button', {
+    text: "Soleil"
+});
+
+const mainPanel = Ext.create('Ext.panel.Panel', {
+    title: 'La maison autonome',
+    html: 'Hello World!',
+    items: [button]
+});
+
+Ext.Viewport.add(mainPanel);
+```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Api impérative
+
+        Utile pour des interfaces dynamiques
+
+        Plus compacte
+
+        Moins "error prone"
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Pas d'HTML/CSS !? #1
+
+        Javascript génère les balises
+
+        Html généré à la volé moins "propre"
+
+        Thème CSS complet
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Pas d'HTML/CSS !? #2
+
+        Html uniquement pour la mise en forme de données
+
+        Utile pour la mise en forme des colonnes dans une grille
+
+        Pas de CSS pour la mise en page (sauf `margin` et `padding`)
+
+        Modification de variables SCSS de thème
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Layout & Container
+
+        Abstraction du Html/Css
+
+        Layout par composants et non éléments Html
+
+        Plus haut niveau
+
+        Layouts interactifs (card, accordion)
+
+        Appliqué dans un `Container`
+
+        Approche applicative
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Modèle objet
+
+        Asynchrone
+
+        Incompatible ES6
+
+        Exemple
+
+        ```js
+        Ext.define("App.view.BatteryCalculator", {
+          extend: "Ext.Panel",
+          requires: ["App.view.Other"],
+          statics: {
+            MAX_VOLTAGE : 24
+          },
+          constructor: function(voltage) {
+            this.voltage = voltage;
+          },
+          layout: "vbox",
+          items: [
+            ...
+          ]
+        });
+
+        const obj = Ext.create("App.view.BatteryCalculator", 12);
+        ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Modèle objet - Mixin
+
+```js
+Ext.define('CanSing', {
+  sing: function() {
+    alert("For he's a jolly good fellow...")
+  }
+});
+
+Ext.define('Musician', {
+  mixins: ['CanSing'],
+
+  // If sing already exists
+  sing: function() {
+    // delegate singing operation to mixin
+    this.mixins.canSing.sing.call(this);
+  }
+})
+```
+
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Modèle objet - config
+
+```js
+Ext.define('My.sample.Person', {
+  config: {
+    name: 'Mr. Unknown',
+    age: 0,
+    gender: 'Male'
+  },
+  constructor: function(config) {
+    this.initConfig(config);
+    return this;
+  }
+});
+```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Modèle objet - config #2
+      
+      getter/setter automatiques
+
+      ```js
+      var jacky = Ext.create("My.sample.Person", {
+          name: "Jacky",
+          age: 35
+        });
+      alert(jacky.getName());
+      jacky.setName("Mr. Nguyen");
+      alert(jacky.getName()); // alerts "Mr. Nguyen"
+      ```
+
+      `apply` - avant le `set`
+
+      ```js
+      applyAge: function(age) { }
+      ```
+      
+      `update` - après le `set`
+
+      ```js
+      updateAge: function(newAge, oldAge) { }
+      ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Modèle objet - conventions
+
+        `PackageName.folder.subfolder.ClassName`
+
+        Exemple : 
+
+        `App.store.solar.Device`
+
+        Correspond à :
+
+        `app/store/solar/Device.js`
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+        ## Modules
+
+        Similaire à AMD
+
+        Non compatible ES6
+
+      </textarea>
+    </section>
+		</div>
+	</div>
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+      history: true,
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+			]
+		});
+	</script>
+</body>
+</html>

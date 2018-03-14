@@ -1,0 +1,269 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Plus loin | ExtJs 6.5</title>
+
+  <link rel="stylesheet" href="css/reveal.css">
+  <link rel="stylesheet" href="css/theme/beige.css">
+  <!--Personnal modification-->
+  <link rel="stylesheet" href="css/slides.css">
+
+  <!-- Theme used for syntax highlighting of code -->
+  <link rel="stylesheet" href="lib/css/zenburn.css">
+
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+    <section data-markdown>
+      <textarea data-template>
+      ## Responsive design : 3 solutions
+
+      Configurations conditionnelles
+
+      Profiles
+
+      Application universelle
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Via `platformConfig` ou `responsiveConfig`
+
+      Spécifie un contenu de vue différent en fonction des plateforme
+
+      Utile quand peu de différences
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## platformConfig - utilisation
+
+      ```js
+      Ext.create({
+        xtype: 'panel',
+        platformConfig: {
+          desktop: {
+          title: 'Some Rather Descriptive Title'
+          },
+          '!desktop': {
+          title: 'Short Title'
+          }
+        }
+      });
+      ```
+        </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Via des profiles : définition
+
+      Profile pour gérer quelles vues s'applique en fonction du device
+
+      Profile set le xtype d'une vue
+
+      ```js
+      Ext.define('App.profile.Phone', {
+        extend: 'Ext.app.Profile',
+        views: {
+          main: 'App.view.phone.main.Main',
+        },
+        isActive: function () {
+          return Ext.platformTags.phone;
+        },
+        launch: function () {
+        // Do something on launch
+        }
+      });
+      ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Via des profiles : utilisation
+
+      ```js
+      Ext.define('App.Application', {
+        extend: 'Ext.app.Application',
+        profiles: [
+          'Phone',
+          'Tablet'
+        ],
+        // ...
+      });
+      ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Application "universelle"
+
+      Partage de logique métier
+
+      Utilise les 2 toolkits (modern et classic)
+
+      Builds différents
+
+      *Attention : error prone !*
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Formation ExtJs 6.5
+      ### Aller plus loin
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Routes
+
+      Effectue une action sur changement de hash
+
+      Attention à bien gérer les ressources
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Routes : Dans un `Controller`
+      ```js
+      routes: [
+        '*'   : {
+          before : 'onBeforeRoute',
+          action : 'onRoute'
+        },
+        'user/:id' : {
+          before  : 'onBeforeUser',
+          action     : 'onUser',
+          conditions : {
+            ':id' : '([0-9]+)'
+          }
+        }
+      ],
+      onUser : function (id) {
+        //...
+      }
+      ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Routes : via la mixin `Ext.route.Mixin`
+
+      ```js
+      Ext.define('MyClass', {
+        mixins : [
+          'Ext.route.Mixin'
+        ],
+        routes : {
+          'foo' : 'onFoo'
+        }
+      });
+      ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Routes : évènements globaux
+
+      beforeroutes
+
+      beforeroute
+
+      unmatchedroute
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Localisation
+
+      Via des overrides
+
+      Packages `ext-local` à inclure dans `app.json`
+
+      ```js
+      "requires": [
+        "ext-locale"
+      ],
+      ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Localisation : exemple
+
+      ```js
+      Ext.define("Ext.locale.es.picker.Date", {
+        override: "Ext.picker.Date",
+        todayText: "Hoy",
+        minText: "Esta fecha es anterior a la fecha mínima",
+        maxText: "Esta fecha es posterior a la fecha máxima",
+        disabledDaysText: "",
+        disabledDatesText: "",
+        nextText: 'Mes Siguiente (Control+Right)',
+        prevText: 'Mes Anterior (Control+Left)',
+        monthYearText: 'Seleccione un mes (Control+Up/Down para desplazar el año)',
+        todayTip: "{0} (Barra espaciadora)",
+        format: "d/m/Y",
+        startDay: 1
+      });
+      ```
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Package
+
+      Sencha Package Manager : clone de npm... uniquement Sencha
+
+      Partage de code
+
+      Notion de workspace
+      </textarea>
+    </section>
+    <section data-markdown>
+      <textarea data-template>
+      ## Package : partagez des composants
+    
+      `sencha generate package common`
+
+      Dans `app.json` : 
+
+      ```js
+      "requires": [
+        "common"
+      ]
+      ```
+      </textarea>
+    </section>
+    </div>
+  </div>
+  <script src="lib/js/head.min.js"></script>
+  <script src="js/reveal.js"></script>
+
+  <script>
+    // More info about config & dependencies:
+    // - https://github.com/hakimel/reveal.js#configuration
+    // - https://github.com/hakimel/reveal.js#dependencies
+    Reveal.initialize({
+      history: true,
+      dependencies: [
+        { src: 'plugin/markdown/marked.js' },
+        { src: 'plugin/markdown/markdown.js' },
+        { src: 'plugin/notes/notes.js', async: true },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+      ]
+    });
+  </script>
+</body>
+</html>
